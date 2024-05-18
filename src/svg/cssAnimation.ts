@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Transformable, { copyTransform } from '../core/Transformable';
 import Displayable from '../graphic/Displayable';
 import { SVGVNodeAttrs, BrushScope, createBrushScope} from './core';

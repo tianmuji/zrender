@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Group from '../graphic/Group';
 import ZRImage from '../graphic/Image';
 import Circle from '../graphic/shape/Circle';

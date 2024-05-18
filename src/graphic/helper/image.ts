@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import LRU from '../../core/LRU';
 import { platformApi } from '../../core/platform';
 import { ImageLike } from '../../core/types';
@@ -38,7 +38,7 @@ export function findExistImage(newImageOrSrc: string | ImageLike): ImageLike {
  * @return image
  */
 export function createOrUpdateImage<T>(
-    newImageOrSrc: string | ImageLike,
+    newImageOrSrc: ImageLike,
     image: ImageLike,
     hostEl: { dirty: () => void },
     onload?: (image: ImageLike, payload: T) => void,
@@ -66,7 +66,8 @@ export function createOrUpdateImage<T>(
         }
         else {
             image = platformApi.loadImage(
-                newImageOrSrc, imageOnLoad, imageOnLoad
+                // newImageOrSrc, imageOnLoad, imageOnLoad
+            newImageOrSrc
             );
             (image as any).__zrImageSrc = newImageOrSrc;
 

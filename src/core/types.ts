@@ -11,7 +11,7 @@ export type ArrayLike<T> = {
     length: number
 }
 
-export type ImageLike = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+export type ImageLike = PixelMap | ImageData
 
 // subset of CanvasTextBaseline
 export type TextVerticalAlign = 'top' | 'middle' | 'bottom'
@@ -52,9 +52,9 @@ type ZREventProperties = {
     zrByTouch: boolean
 }
 
-export type ZRRawMouseEvent = MouseEvent & ZREventProperties
-export type ZRRawTouchEvent = TouchEvent & ZREventProperties
-export type ZRRawPointerEvent = TouchEvent & ZREventProperties
+export type ZRRawMouseEvent = ClickEvent & ZREventProperties
+export type ZRRawTouchEvent = ClickEvent & ZREventProperties
+export type ZRRawPointerEvent = ClickEvent & ZREventProperties
 
 export type ZRRawEvent = ZRRawMouseEvent | ZRRawTouchEvent | ZRRawPointerEvent
 

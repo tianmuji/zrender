@@ -1,6 +1,7 @@
 // TODO
 // 1. shadow
 // 2. Image: sx, sy, sw, sh
+// @ts-nocheck
 
 import {
     adjustTextY,

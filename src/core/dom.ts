@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import env from './env';
 import {buildTransformer} from './fourPointsTransform';
 import {Dictionary} from './types';

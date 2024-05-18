@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ImageLike } from '../core/types';
 import { SVGVNode } from '../svg/core';
 
@@ -16,7 +17,7 @@ export interface PatternObjectBase {
 }
 
 export interface ImagePatternObject extends PatternObjectBase {
-    image: ImageLike | string
+    image: ImageLike
     repeat?: ImagePatternRepeat
 
     /**

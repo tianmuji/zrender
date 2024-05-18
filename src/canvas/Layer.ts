@@ -14,23 +14,23 @@ import { REDRAW_BIT } from '../graphic/constants';
 import { platformApi } from '../core/platform';
 
 function createDom(id: string, painter: CanvasPainter, dpr: number) {
-    const newDom = platformApi.createCanvas();
+    const newDom = platformApi.createCanvas(painter.root);
     const width = painter.getWidth();
     const height = painter.getHeight();
 
-    const newDomStyle = newDom.style;
-    if (newDomStyle) {  // In node or some other non-browser environment
-        newDomStyle.position = 'absolute';
-        newDomStyle.left = '0';
-        newDomStyle.top = '0';
-        newDomStyle.width = width + 'px';
-        newDomStyle.height = height + 'px';
+    // const newDomStyle = newDom.style;
+    // if (newDomStyle) {  // In node or some other non-browser environment
+    //     newDomStyle.position = 'absolute';
+    //     newDomStyle.left = '0';
+    //     newDomStyle.top = '0';
+    //     newDomStyle.width = width + 'px';
+    //     newDomStyle.height = height + 'px';
+    //
+    //     newDom.setAttribute('data-zr-dom-id', id);
+    // }
 
-        newDom.setAttribute('data-zr-dom-id', id);
-    }
-
-    newDom.width = width * dpr;
-    newDom.height = height * dpr;
+    // newDom.width = width * dpr;
+    // newDom.height = height * dpr;
 
     return newDom;
 }
@@ -48,8 +48,8 @@ export default class Layer extends Eventful {
 
     id: string
 
-    dom: HTMLCanvasElement
-    domBack: HTMLCanvasElement
+    dom: CanvasRenderingContext2D
+    domBack: CanvasRenderingContext2D
 
     ctx: CanvasRenderingContext2D
     ctxBack: CanvasRenderingContext2D
@@ -104,30 +104,32 @@ export default class Layer extends Eventful {
 
     __builtin__: boolean
 
-    constructor(id: string | HTMLCanvasElement, painter: CanvasPainter, dpr?: number) {
+    constructor(id: CanvasRenderingContext2D, painter: CanvasPainter, dpr?: number) {
         super();
 
         let dom;
         dpr = dpr || devicePixelRatio;
-        if (typeof id === 'string') {
-            dom = createDom(id, painter, dpr);
-        }
-        // Not using isDom because in node it will return false
-        else if (util.isObject(id)) {
-            dom = id;
-            id = dom.id;
-        }
-        this.id = id as string;
+        // todo HarmonyOS
+        // must be CanvasRenderingContext2D
+        // if (typeof id === 'string') {
+        //     dom = createDom(id, painter, dpr);
+        // }
+        // // Not using isDom because in node it will return false
+        // else if (util.isObject(id)) {
+        //     dom = id;
+        //     id = dom.id;
+        // }
+        // this.id = id as string;
         this.dom = dom;
 
-        const domStyle = dom.style;
-        if (domStyle) { // Not in node
-            util.disableUserSelect(dom);
-            dom.onselectstart = () => false;
-            domStyle.padding = '0';
-            domStyle.margin = '0';
-            domStyle.borderWidth = '0';
-        }
+        // const domStyle = dom.style;
+        // if (domStyle) { // Not in node
+        //     util.disableUserSelect(dom);
+        //     dom.onselectstart = () => false;
+        //     domStyle.padding = '0';
+        //     domStyle.margin = '0';
+        //     domStyle.borderWidth = '0';
+        // }
 
         this.painter = painter;
 
@@ -144,7 +146,9 @@ export default class Layer extends Eventful {
     }
 
     initContext() {
-        this.ctx = this.dom.getContext('2d');
+        // todo
+        // dom and ctx both return CanvasRenderingContext2D
+        this.ctx = this.dom;
         (this.ctx as ZRCanvasRenderingContext).dpr = this.dpr;
     }
 
@@ -156,7 +160,7 @@ export default class Layer extends Eventful {
         const dpr = this.dpr;
 
         this.domBack = createDom('back-' + this.id, this.painter, dpr);
-        this.ctxBack = this.domBack.getContext('2d');
+        this.ctxBack = this.domBack
 
         if (dpr !== 1) {
             this.ctxBack.scale(dpr, dpr);
@@ -358,20 +362,22 @@ export default class Layer extends Eventful {
         const dpr = this.dpr;
 
         const dom = this.dom;
-        const domStyle = dom.style;
+        // const domStyle = dom.style;
         const domBack = this.domBack;
 
-        if (domStyle) {
-            domStyle.width = width + 'px';
-            domStyle.height = height + 'px';
-        }
+        // if (domStyle) {
+        //     domStyle.width = width + 'px';
+        //     domStyle.height = height + 'px';
+        // }
 
-        dom.width = width * dpr;
-        dom.height = height * dpr;
+        // todo HarmonyOS
+        // do this outside
+        // dom.width = width * dpr;
+        // dom.height = height * dpr;
 
         if (domBack) {
-            domBack.width = width * dpr;
-            domBack.height = height * dpr;
+            // domBack.width = width * dpr;
+            // domBack.height = height * dpr;
 
             if (dpr !== 1) {
                 this.ctxBack.scale(dpr, dpr);
@@ -405,8 +411,10 @@ export default class Layer extends Eventful {
             }
 
             this.ctxBack.globalCompositeOperation = 'copy';
+            // todo HarmonyOS
+            const sourceData = dom.getPixelMap(0, 0, width, height)
             this.ctxBack.drawImage(
-                dom, 0, 0,
+                sourceData, 0, 0,
                 width / dpr,
                 height / dpr
             );
@@ -462,7 +470,8 @@ export default class Layer extends Eventful {
             if (haveMotionBLur) {
                 ctx.save();
                 ctx.globalAlpha = lastFrameAlpha;
-                ctx.drawImage(domBack, x, y, width, height);
+                const sourceData = domBack.getPixelMap(0, 0, width, height)
+                ctx.drawImage(sourceData, x, y, width, height);
                 ctx.restore();
             }
         };

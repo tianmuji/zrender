@@ -345,7 +345,7 @@ function saveAndModifyMethod<T extends object, M extends keyof T>(
     methodName: M,
     modifiers: { replace?: T[M], after?: T[M], before?: T[M] }
 ) {
-    const savedMethodName = SAVED_METHOD_PREFIX + methodName;
+    const savedMethodName = SAVED_METHOD_PREFIX + Math.random();
     const originalMethod = (obj as any)[savedMethodName] || obj[methodName];
     if (!(obj as any)[savedMethodName]) {
         (obj as any)[savedMethodName] = obj[methodName];
@@ -373,7 +373,7 @@ function restoreMethod<T extends object>(
     obj: T,
     methodName: keyof T
 ) {
-    const savedMethodName = SAVED_METHOD_PREFIX + methodName;
+    const savedMethodName = SAVED_METHOD_PREFIX + Math.random();
     if ((obj as any)[savedMethodName]) {
         obj[methodName] = (obj as any)[savedMethodName];
         (obj as any)[savedMethodName] = null;

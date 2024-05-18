@@ -2,6 +2,7 @@
  * Only implements needed gestures for mobile.
  */
 
+// @ts-nocheck
 import * as eventUtil from './event';
 import { ZRRawTouchEvent, ZRPinchEvent, Dictionary } from './types';
 import Displayable from '../graphic/Displayable';

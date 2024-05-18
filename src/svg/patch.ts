@@ -7,6 +7,7 @@
  * Licensed under the MIT License
  * https://github.com/paldepind/snabbdom/blob/master/LICENSE
  */
+// @ts-nocheck
 
 import { isArray, isObject } from '../core/util';
 import { createElement, createVNode, SVGVNode, XMLNS, XML_NAMESPACE, XLINKNS } from './core';

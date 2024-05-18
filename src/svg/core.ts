@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { keys, map } from '../core/util';
 import { encodeHTML } from '../core/dom';
 

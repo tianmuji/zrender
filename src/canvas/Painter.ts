@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {devicePixelRatio} from '../config';
 import * as util from '../core/util';
 import Layer, { LayerConfig } from './Layer';
@@ -41,26 +42,26 @@ function isLayerValid(layer: Layer) {
 }
 
 function createRoot(width: number, height: number) {
-    const domRoot = document.createElement('div');
-
-    // domRoot.onselectstart = returnFalse; // Avoid page selected
-    domRoot.style.cssText = [
-        'position:relative',
-        // IOS13 safari probably has a compositing bug (z order of the canvas and the consequent
-        // dom does not act as expected) when some of the parent dom has
-        // `-webkit-overflow-scrolling: touch;` and the webpage is longer than one screen and
-        // the canvas is not at the top part of the page.
-        // Check `https://bugs.webkit.org/show_bug.cgi?id=203681` for more details. We remove
-        // this `overflow:hidden` to avoid the bug.
-        // 'overflow:hidden',
-        'width:' + width + 'px',
-        'height:' + height + 'px',
-        'padding:0',
-        'margin:0',
-        'border-width:0'
-    ].join(';') + ';';
-
-    return domRoot;
+    // const domRoot = document.createElement('div');
+    //
+    // // domRoot.onselectstart = returnFalse; // Avoid page selected
+    // domRoot.style.cssText = [
+    //     'position:relative',
+    //     // IOS13 safari probably has a compositing bug (z order of the canvas and the consequent
+    //     // dom does not act as expected) when some of the parent dom has
+    //     // `-webkit-overflow-scrolling: touch;` and the webpage is longer than one screen and
+    //     // the canvas is not at the top part of the page.
+    //     // Check `https://bugs.webkit.org/show_bug.cgi?id=203681` for more details. We remove
+    //     // this `overflow:hidden` to avoid the bug.
+    //     // 'overflow:hidden',
+    //     'width:' + width + 'px',
+    //     'height:' + height + 'px',
+    //     'padding:0',
+    //     'margin:0',
+    //     'border-width:0'
+    // ].join(';') + ';';
+    //
+    // return domRoot;
 }
 
 interface CanvasPainterOption {
@@ -74,15 +75,15 @@ export default class CanvasPainter implements PainterBase {
 
     type = 'canvas'
 
-    root: HTMLElement
+    root: CanvasRenderingContext2D
 
     dpr: number
 
     storage: Storage
 
-    private _singleCanvas: boolean
+    private readonly _singleCanvas: boolean
 
-    private _opts: CanvasPainterOption
+    private readonly _opts: CanvasPainterOption
 
     private _zlevelList: number[] = []
 
@@ -100,7 +101,7 @@ export default class CanvasPainter implements PainterBase {
     private _width: number
     private _height: number
 
-    private _domRoot: HTMLElement
+    private _domRoot: CanvasRenderingContext2D
 
     private _hoverlayer: Layer
 
@@ -109,13 +110,21 @@ export default class CanvasPainter implements PainterBase {
     private _backgroundColor: string | GradientObject | ImagePatternObject
 
 
-    constructor(root: HTMLElement, storage: Storage, opts: CanvasPainterOption, id: number) {
+    constructor(root: CanvasRenderingContext2D, storage: Storage, opts: CanvasPainterOption, id: number) {
 
         this.type = 'canvas';
 
         // In node environment using node-canvas
-        const singleCanvas = !root.nodeName // In node ?
-            || root.nodeName.toUpperCase() === 'CANVAS';
+        // const singleCanvas = !root.nodeName // In node ?
+        //     || root.nodeName.toUpperCase() === 'CANVAS';
+
+        // in HarmonyOS it will always be CanvasRenderingContext2D
+        // if HarmonyOS support create canvas in third party library and display in the screen
+        // will add back
+        // ssr is also disabled
+        // todo HarmonyOS
+        // set to true
+        const singleCanvas = true
 
         this._opts = opts = util.extend({}, opts || {}) as CanvasPainterOption;
 
@@ -134,13 +143,16 @@ export default class CanvasPainter implements PainterBase {
          */
         this.root = root;
 
-        const rootStyle = root.style;
+        // todo HarmonyOS
+        // disableUserSelect?
 
-        if (rootStyle) {
-            // @ts-ignore
-            util.disableUserSelect(root);
-            root.innerHTML = '';
-        }
+        // const rootStyle = root.style;
+        //
+        // if (rootStyle) {
+        //     // @ts-ignore
+        //     util.disableUserSelect(root);
+        //     root.innerHTML = '';
+        // }
 
         /**
          * @type {module:zrender/Storage}
@@ -154,17 +166,23 @@ export default class CanvasPainter implements PainterBase {
         const layers = this._layers;
 
         if (!singleCanvas) {
-            this._width = getSize(root, 0, opts);
-            this._height = getSize(root, 1, opts);
-
-            const domRoot = this._domRoot = createRoot(
-                this._width, this._height
-            );
-            root.appendChild(domRoot);
+            // todo HarmonyOS
+            // do not need this anymore
+            // this._width = getSize(root, 0, opts);
+            // this._height = getSize(root, 1, opts);
+            //
+            // const domRoot = this._domRoot = createRoot(
+            //     this._width, this._height
+            // );
+            // root.appendChild(domRoot);
         }
         else {
-            const rootCanvas = root as HTMLCanvasElement;
+            const rootCanvas = root as CanvasRenderingContext2D;
+            // todo HarmonyOS
+            // width and height exist in CanvasRenderingContext2D
+            // @ts-ignore
             let width = rootCanvas.width;
+            // @ts-ignore
             let height = rootCanvas.height;
 
             if (opts.width != null) {
@@ -178,7 +196,9 @@ export default class CanvasPainter implements PainterBase {
             this.dpr = opts.devicePixelRatio || 1;
 
             // Use canvas width and height directly
+            // @ts-ignore
             rootCanvas.width = width * this.dpr;
+            // @ts-ignore
             rootCanvas.height = height * this.dpr;
 
             this._width = width;
@@ -216,12 +236,20 @@ export default class CanvasPainter implements PainterBase {
         return this._domRoot;
     }
 
+    /**
+     * @deprecated get offsetLeft and offsetTop by yourself
+     */
     getViewportRootOffset() {
         const viewportRoot = this.getViewportRoot();
         if (viewportRoot) {
             return {
-                offsetLeft: viewportRoot.offsetLeft || 0,
-                offsetTop: viewportRoot.offsetTop || 0
+                // todo HarmonyOS
+                // seems to be used externally
+                // mark as deprecated and just return 0
+                offsetLeft: 0,
+                // offsetLeft: viewportRoot.offsetLeft || 0,
+                // offsetTop: viewportRoot.offsetTop || 0
+                offsetTop: 0
             };
         }
     }
@@ -342,13 +370,17 @@ export default class CanvasPainter implements PainterBase {
 
     private _compositeManually() {
         const ctx = this.getLayer(CANVAS_ZLEVEL).ctx;
-        const width = (this._domRoot as HTMLCanvasElement).width;
-        const height = (this._domRoot as HTMLCanvasElement).height;
+        const width = this._domRoot.width;
+        const height = this._domRoot.height;
         ctx.clearRect(0, 0, width, height);
         // PENDING, If only builtin layer?
         this.eachBuiltinLayer(function (layer) {
             if (layer.virtual) {
-                ctx.drawImage(layer.dom, 0, 0, width, height);
+                // todo HarmonyOS
+                // in HarmonyOS ctx.drawImage only accepts PixelData and bitmap
+                // so get PixelData from layer.dom and draw it
+                const sourceData = layer.dom.getPixelMap(0, 0, width, height)
+                ctx.drawImage(sourceData, 0, 0, width, height);
             }
         });
     }
@@ -569,16 +601,16 @@ export default class CanvasPainter implements PainterBase {
         let i = -1;
 
         if (layersMap[zlevel]) {
-            if (process.env.NODE_ENV !== 'production') {
-                util.logError('ZLevel ' + zlevel + ' has been used already');
-            }
+            // if (process.env.NODE_ENV !== 'production') {
+            //     util.logError('ZLevel ' + zlevel + ' has been used already');
+            // }
             return;
         }
         // Check if is a valid layer
         if (!isLayerValid(layer)) {
-            if (process.env.NODE_ENV !== 'production') {
-                util.logError('Layer of zlevel ' + zlevel + ' is not valid');
-            }
+            // if (process.env.NODE_ENV !== 'production') {
+            //     util.logError('Layer of zlevel ' + zlevel + ' is not valid');
+            // }
             return;
         }
 
@@ -604,10 +636,10 @@ export default class CanvasPainter implements PainterBase {
             if (prevLayer) {
                 const prevDom = prevLayer.dom;
                 if (prevDom.nextSibling) {
-                    domRoot.insertBefore(
-                        layer.dom,
-                        prevDom.nextSibling
-                    );
+                    // domRoot.insertBefore(
+                    //     layer.dom,
+                    //     prevDom.nextSibling
+                    // );
                 }
                 else {
                     domRoot.appendChild(layer.dom);
@@ -936,7 +968,8 @@ export default class CanvasPainter implements PainterBase {
             const height = imageLayer.dom.height;
             this.eachLayer(function (layer) {
                 if (layer.__builtin__) {
-                    ctx.drawImage(layer.dom, 0, 0, width, height);
+                    const sourceData = layer.dom.getPixelMap(0, 0, width, height)
+                    ctx.drawImage(sourceData, 0, 0, width, height);
                 }
                 else if (layer.renderToCanvas) {
                     ctx.save();

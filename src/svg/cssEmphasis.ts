@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Displayable from '../graphic/Displayable';
 import { liftColor } from '../tool/color';
 import { BrushScope, SVGVNodeAttrs } from './core';

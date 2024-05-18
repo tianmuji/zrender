@@ -102,7 +102,7 @@ function parseInt10(val: string) {
     return parseInt(val, 10);
 }
 export function getSize(
-    root: HTMLElement,
+    root: CanvasRenderingContext2D,
     whIdx: number,
     opts: { width?: number | string, height?: number | string}
 ) {
@@ -117,11 +117,9 @@ export function getSize(
     }
 
     // IE8 does not support getComputedStyle, but it use VML.
-    const stl = document.defaultView.getComputedStyle(root);
+    // const stl = document.defaultView.getComputedStyle(root);
 
     return (
-        (root[cwh] || parseInt10(stl[wh]) || parseInt10(root.style[wh]))
-        - (parseInt10(stl[plt]) || 0)
-        - (parseInt10(stl[prb]) || 0)
+        (root[cwh])
     ) | 0;
 }

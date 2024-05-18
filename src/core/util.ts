@@ -1,4 +1,5 @@
 /* global: defineProperty */
+// @ts-nocheck
 import { Dictionary, ArrayLike, KeyOfDistributive } from './types';
 import { GradientObject } from '../graphic/Gradient';
 import { ImagePatternObject } from '../graphic/Pattern';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { ZRenderType } from '../zrender';
 import type CanvasPainter from '../canvas/Painter';
 import type BoundingRect from '../core/BoundingRect';

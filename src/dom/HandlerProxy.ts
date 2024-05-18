@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 /* global document */
 
 import {
@@ -537,7 +537,7 @@ function unmountDOMEventListeners(scope: DOMHandlerScope) {
 
 
 class DOMHandlerScope {
-    domTarget: HTMLElement | HTMLDocument
+    domTarget: CanvasRenderingContext2D | HTMLDocument
     domHandlers: DomHandlersMap
 
     // Key: eventName, value: mounted handler functions.
@@ -550,7 +550,7 @@ class DOMHandlerScope {
     touching = false;
 
     constructor(
-        domTarget: HTMLElement | HTMLDocument,
+        domTarget: CanvasRenderingContext2D | HTMLDocument,
         domHandlers: DomHandlersMap
     ) {
         this.domTarget = domTarget;
@@ -562,8 +562,8 @@ class DOMHandlerScope {
 
 export default class HandlerDomProxy extends Eventful {
 
-    dom: HTMLElement
-    painterRoot: HTMLElement
+    dom: CanvasRenderingContext2D
+    painterRoot: CanvasRenderingContext2D
 
     handler: Handler
 
@@ -578,7 +578,7 @@ export default class HandlerDomProxy extends Eventful {
     __mayPointerCapture: VectorArray
 
 
-    constructor(dom: HTMLElement, painterRoot: HTMLElement) {
+    constructor(dom: CanvasRenderingContext2D, painterRoot: CanvasRenderingContext2D) {
         super();
 
         this.dom = dom;
@@ -600,8 +600,11 @@ export default class HandlerDomProxy extends Eventful {
         }
     }
 
+    /**
+     * @deprecated HarmonyOS does not support set cursor style
+     */
     setCursor(cursorStyle: string) {
-        this.dom.style && (this.dom.style.cursor = cursorStyle || 'default');
+        // this.dom.style && (this.dom.style.cursor = cursorStyle || 'default');
     }
 
     /**

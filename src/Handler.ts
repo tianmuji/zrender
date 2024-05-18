@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as util from './core/util';
 import * as vec2 from './core/vector';
 import Draggable from './mixin/Draggable';
@@ -138,7 +139,7 @@ class Handler extends Eventful {
 
     storage: Storage
     painter: PainterBase
-    painterRoot: HTMLElement
+    painterRoot: CanvasRenderingContext2D
 
     proxy: HandlerProxyInterface
 
@@ -158,7 +159,7 @@ class Handler extends Eventful {
         storage: Storage,
         painter: PainterBase,
         proxy: HandlerProxyInterface,
-        painterRoot: HTMLElement,
+        painterRoot: CanvasRenderingContext2D,
         pointerSize: number
     ) {
         super();

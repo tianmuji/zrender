@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export function createTextNode(text: string): Text {
     return document.createTextNode(text);
 }

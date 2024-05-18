@@ -12,9 +12,9 @@
             height: 100%;
         }
     </style>
-    <div id="main"></div>
+    <canvas id="main"></canvas>
     <script type="text/javascript">
-        var zr = zrender.init(document.getElementById('main'));
+        var zr = zrender.init(document.getElementById('main'), { renderer: 'canvas' });
         console.profile('init');
         for (var i = 0; i < 200; i++) {
             for (var j = 0; j < 200; j++) {
@@ -33,6 +33,7 @@
                 zr.add(image);
             }
         }
+        console.log(zr)
         console.profileEnd('init');
     </script>
 </body>

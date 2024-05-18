@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PathRebuilder } from '../core/PathProxy';
 import { isAroundZero } from './helper';
 

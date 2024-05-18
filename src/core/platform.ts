@@ -1,16 +1,18 @@
+import { ImageLike, ZRCanvasRenderingContext } from './types';
+
 export const DEFAULT_FONT_SIZE = 12;
 export const DEFAULT_FONT_FAMILY = 'sans-serif';
 export const DEFAULT_FONT = `${DEFAULT_FONT_SIZE}px ${DEFAULT_FONT_FAMILY}`;
 
 interface Platform {
     // TODO CanvasLike?
-    createCanvas(): HTMLCanvasElement
+    createCanvas(ctx?: CanvasRenderingContext2D): CanvasRenderingContext2D
     measureText(text: string, font?: string): { width: number }
     loadImage(
-        src: string,
-        onload: () => void | HTMLImageElement['onload'],
-        onerror: () => void | HTMLImageElement['onerror']
-    ): HTMLImageElement
+        src: ImageLike
+        // onload: () => void | HTMLImageElement['onload'],
+        // onerror: () => void | HTMLImageElement['onerror']
+    ):  ImageLike
 }
 
 // Text width map used for environment there is no canvas
@@ -51,9 +53,10 @@ export const DEFAULT_TEXT_WIDTH_MAP = getTextWidthMap(defaultWidthMapStr);
 
 export const platformApi: Platform = {
     // Export methods
-    createCanvas() {
-        return typeof document !== 'undefined'
-            && document.createElement('canvas');
+    createCanvas(ctx) {
+        return ctx
+        // return typeof document !== 'undefined'
+        //     && document.createElement('canvas');
     },
 
     measureText: (function () {
@@ -61,10 +64,10 @@ export const platformApi: Platform = {
         let _ctx: CanvasRenderingContext2D;
         let _cachedFont: string;
         return (text: string, font?: string) => {
-            if (!_ctx) {
-                const canvas = platformApi.createCanvas();
-                _ctx = canvas && canvas.getContext('2d');
-            }
+            // if (!_ctx) {
+            //     const canvas = platformApi.createCanvas();
+            //     _ctx = canvas && canvas.getContext('2d');
+            // }
             if (_ctx) {
                 if (_cachedFont !== font) {
                     _cachedFont = _ctx.font = font || DEFAULT_FONT;
@@ -92,12 +95,15 @@ export const platformApi: Platform = {
         };
     })(),
 
-    loadImage(src, onload, onerror) {
-        const image = new Image();
-        image.onload = onload;
-        image.onerror = onerror;
-        image.src = src;
-        return image;
+
+    // todo HarmonyOS
+    // only PixelMap and ImageData can be supported
+    loadImage(src: ImageLike) {
+        // const image = new Image();
+        // image.onload = onload;
+        // image.onerror = onerror;
+        // image.src = src;
+        return src;
     }
 };
 

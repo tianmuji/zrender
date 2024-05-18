@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import Path, { DEFAULT_PATH_STYLE, PathStyleProps } from '../graphic/Path';
 import ZRImage, { ImageStyleProps } from '../graphic/Image';

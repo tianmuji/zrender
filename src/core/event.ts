@@ -1,11 +1,12 @@
 /**
  * Utilities for mouse or touch events.
  */
-
+// @ts-nocheck
 import Eventful from './Eventful';
 import env from './env';
 import { ZRRawEvent } from './types';
 import {isCanvasEl, transformCoordWithViewport} from './dom';
+import { Observer } from '../mitt';
 
 const MOUSE_EVENT_REG = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
 const _calcOut: number[] = [];
@@ -267,7 +268,15 @@ export function addEventListener(
     //     // By default, the third param of el.addEventListener is `capture: false`.
     //     : void 0;
     // el.addEventListener(name, handler /* , opts */);
-    el.addEventListener(name, handler, opt);
+    // todo HarmonyOS
+    // if I know which method to call, maybe can call it through instance
+    // however, it seems to be unreachable
+    // the key is how to expose it back to the UI thread because in harmonyOS el.addEventListener is not supported
+    // have to declare it in UI page
+    // el.addEventListener(name, handler, opt);
+    // todo HarmonyOS
+    // use sub and pub pattern to replace el.addEventListener
+    Observer.on(name, handler)
 }
 
 /**
@@ -283,7 +292,8 @@ export function removeEventListener(
     handler: RemoveEventListenerParams[1],
     opt: RemoveEventListenerParams[2]
 ) {
-    el.removeEventListener(name, handler, opt);
+    // el.removeEventListener(name, handler, opt);
+    Observer.off(name, handler)
 }
 
 /**

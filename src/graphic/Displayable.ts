@@ -1,7 +1,7 @@
 /**
  * Base class of all displayable graphic objects
  */
-
+// @ts-nocheck
 import Element, {ElementProps, ElementStatePropNames, ElementAnimateConfig, ElementCommonState} from '../Element';
 import BoundingRect from '../core/BoundingRect';
 import { PropType, Dictionary, MapToType } from '../core/types';

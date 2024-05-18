@@ -16,7 +16,7 @@ import {PainterBase} from './PainterBase';
 import Animation, {getTime} from './animation/Animation';
 import HandlerProxy from './dom/HandlerProxy';
 import Element, { ElementEventCallback } from './Element';
-import { Dictionary, ElementEventName, RenderedEvent, WithThisType } from './core/types';
+import { Dictionary, ElementEventName, RenderedEvent, WithThisType, WXCanvasRenderingContext } from './core/types';
 import { LayerConfig } from './canvas/Layer';
 import { GradientObject } from './graphic/Gradient';
 import { PatternObject } from './graphic/Pattern';
@@ -25,10 +25,11 @@ import Displayable from './graphic/Displayable';
 import { lum } from './tool/color';
 import { DARK_MODE_THRESHOLD } from './config';
 import Group from './graphic/Group';
+import CanvasPainter from './canvas/Painter';
 
 
 type PainterBaseCtor = {
-    new(dom: HTMLElement, storage: Storage, ...args: any[]): PainterBase
+    new(dom: CanvasRenderingContext2D, storage: Storage, ...args: any[]): PainterBase
 }
 
 const painterCtors: Dictionary<PainterBaseCtor> = {};
@@ -66,7 +67,7 @@ class ZRender {
     /**
      * Not necessary if using SSR painter like svg-ssr
      */
-    dom?: HTMLElement
+    dom?: CanvasRenderingContext2D
 
     id: number
 
@@ -89,7 +90,7 @@ class ZRender {
 
     private _backgroundColor: string | GradientObject | PatternObject;
 
-    constructor(id: number, dom?: HTMLElement, opts?: ZRenderInitOpt) {
+    constructor(id: number, dom?: CanvasRenderingContext2D, opts?: ZRenderInitOpt) {
         opts = opts || {};
 
         /**
@@ -107,11 +108,11 @@ class ZRender {
             // Use the first registered renderer.
             rendererType = zrUtil.keys(painterCtors)[0];
         }
-        if (process.env.NODE_ENV !== 'production') {
-            if (!painterCtors[rendererType]) {
-                throw new Error(`Renderer '${rendererType}' is not imported. Please import it first.`);
-            }
-        }
+        // if (process.env.NODE_ENV !== 'production') {
+        //     if (!painterCtors[rendererType]) {
+        //         throw new Error(`Renderer '${rendererType}' is not imported. Please import it first.`);
+        //     }
+        // }
 
         opts.useDirtyRect = opts.useDirtyRect == null
             ? false
@@ -485,16 +486,21 @@ class ZRender {
     }
 }
 
+// 暂时只支持canvas
+export enum TRenderer {
+    CANVAS = 'canvas',
+    // SVG = 'svg'
+}
 
 export interface ZRenderInitOpt {
-    renderer?: string   // 'canvas' or 'svg
+    renderer?: TRenderer   // 'canvas' or 'svg
     devicePixelRatio?: number
     width?: number | string // 10, 10px, 'auto'
     height?: number | string
     useDirtyRect?: boolean
     useCoarsePointer?: 'auto' | boolean
     pointerSize?: number
-    ssr?: boolean   // If enable ssr mode.
+    ssr?: false   // If enable ssr mode.
 }
 
 /**
@@ -502,7 +508,7 @@ export interface ZRenderInitOpt {
  *
  * @param dom Not necessary if using SSR painter like svg-ssr
  */
-export function init(dom?: HTMLElement | null, opts?: ZRenderInitOpt) {
+export function init(dom?: CanvasRenderingContext2D, opts?: ZRenderInitOpt) {
     const zr = new ZRender(zrUtil.guid(), dom, opts);
     instances[zr.id] = zr;
     return zr;

@@ -12,7 +12,7 @@ export interface PainterBase {
     type: string
 
     // root will be undefined if ssr is true
-    root?: HTMLElement
+    root?: CanvasRenderingContext2D
 
     // If ssr only
     ssrOnly?: boolean
@@ -32,7 +32,7 @@ export interface PainterBase {
     getHeight(): number
     dispose(): void
 
-    getViewportRoot: () => HTMLElement
+    getViewportRoot: () => CanvasRenderingContext2D
     getViewportRootOffset: () => {offsetLeft: number, offsetTop: number}
 
     refreshHover(): void

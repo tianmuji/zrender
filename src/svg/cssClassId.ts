@@ -1,3 +1,4 @@
+// @ts-nocheck
 let cssClassIdx = 0;
 
 export function getClassId() {

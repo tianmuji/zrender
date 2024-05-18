@@ -3,13 +3,16 @@ import env from './core/env';
 let dpr = 1;
 
 // If in browser environment
-if (env.hasGlobalWindow) {
-    dpr = Math.max(
-        window.devicePixelRatio
-        || (window.screen && (window.screen as any).deviceXDPI / (window.screen as any).logicalXDPI)
-        || 1, 1
-    );
-}
+// todo
+// use harmonyOS api to set devicePixelRatio
+// window is no longer supported
+// if (env.hasGlobalWindow) {
+//     dpr = Math.max(
+//         window.devicePixelRatio
+//         || (window.screen && (window.screen as any).deviceXDPI / (window.screen as any).logicalXDPI)
+//         || 1, 1
+//     );
+// }
 
 /**
  * Debug log mode:

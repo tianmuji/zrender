@@ -447,6 +447,7 @@ export function parseRichText(text: string, style: TextStyleProps) {
                         bgImg = imageHelper.findExistImage(bgImg);
                         if (imageHelper.isImageReady(bgImg)) {
                             // Update token width from image size.
+                            // @ts-ignore
                             token.width = Math.max(token.width, bgImg.width * tokenHeight / bgImg.height);
                         }
                     }

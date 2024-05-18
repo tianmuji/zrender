@@ -1,6 +1,7 @@
 /**
  * SVG Painter
  */
+// @ts-nocheck
 
 import {
     brush,
